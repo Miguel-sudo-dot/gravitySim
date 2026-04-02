@@ -1,5 +1,7 @@
 #include "raylib.h"
 
+#define NUMBER_OBJECTS 2
+
 typedef struct{
     float x, y;
     float velocity;
@@ -23,7 +25,9 @@ int main(void)
     // Initialization
     const int screenWidth = 800;
     const int screenHeight = 800;
-    Object object = InitialiseObject(400, 0, 0, 23, WHITE);
+    Object object[NUMBER_OBJECTS];
+    object[0] = InitialiseObject(400, 0, 0, 23, WHITE);
+    object[1] = InitialiseObject(250, 0, 10, 10, WHITE);
     float acceleration = 0.25;
 
     InitWindow(screenWidth, screenHeight, "Gravity");
@@ -36,13 +40,15 @@ int main(void)
     {
         // Update
         //----------------------------------------------------------------------------------
-        object.velocity += acceleration;
-        object.y += object.velocity;
-
-        if(object.y+object.radius >= screenHeight){
-            object.y = screenHeight-object.radius;
-            object.velocity*=-1;
+        for(int i=0; i<NUMBER_OBJECTS; i++){
+            object[i].velocity += acceleration;
+            object[i].y += object[i].velocity;
+            if(object[i].y+object[i].radius >= screenHeight){
+                object[i].y = screenHeight-object[i].radius;
+                object[i].velocity*=-1;
+            }
         }
+
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -50,8 +56,9 @@ int main(void)
         BeginDrawing();
 
             ClearBackground(BLACK);
-            DrawCircle(object.x, object.y, object.radius, object.color);
-
+            for(int i=0; i<NUMBER_OBJECTS; i++){
+                DrawCircle(object[i].x, object[i].y, object[i].radius, object[i].color);
+            }
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
