@@ -1,7 +1,7 @@
 #include "raylib.h"
 #include "math.h"
 
-#define NUMBER_OBJECTS 2
+#define NUMBER_OBJECTS 3
 #define G 398600 // km^3 / (masas terrestre * s^2)
 #define SCALE_FACTOR 100 // 1px -> 100km
 
@@ -29,8 +29,9 @@ int main(void){
     const int screenWidth = 800;
     const int screenHeight = 800;
     Object object[NUMBER_OBJECTS];
-    object[0] = InitialiseObject(400, 0, (Vector2){200,0}, 10, GRAY, 1*1000); 
+    object[0] = InitialiseObject(100, 100, (Vector2){200, -50}, 10, GRAY, 200); 
     object[1] = InitialiseObject(400, 400, (Vector2){0,0}, 30, RED, 10*1000); 
+    object[2]= InitialiseObject(600, 500, (Vector2){-265, 150}, 5, YELLOW, 150);
 
     InitWindow(screenWidth, screenHeight, "Gravity");
 
@@ -41,13 +42,14 @@ int main(void){
     while (!WindowShouldClose()){    // Detect window close button or ESC key
         // Update
         //----------------------------------------------------------------------------------
-        float dt = GetFrameTime()*50;
+        float dt = GetFrameTime()*30;
         for(int i=0; i<NUMBER_OBJECTS; i++){
             for(int j=0; j<NUMBER_OBJECTS; j++){
                 if(j!=i){
                     float dx = (object[j].x-object[i].x)*SCALE_FACTOR;
                     float dy = (object[j].y-object[i].y)*SCALE_FACTOR;
                     float module = sqrt(dx*dx + dy*dy);
+                    if(module<=5) module=5;
                     float force = ((G*object[i].mass*object[j].mass)/(module*module));
                     float acceleration = force/object[i].mass;
                     Vector2 vu = {dx/module, dy/module};
@@ -55,6 +57,9 @@ int main(void){
                     object[i].velocity.y += acceleration*vu.y*dt;
                 }
             }
+            
+        }
+        for(int i=0; i<NUMBER_OBJECTS; i++){
             object[i].x += object[i].velocity.x*dt/SCALE_FACTOR;
             object[i].y += object[i].velocity.y*dt/SCALE_FACTOR;
         }
